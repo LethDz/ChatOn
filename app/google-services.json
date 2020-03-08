@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1041450871868",
+    "firebase_url": "https://onlinechatdemo-d7d59.firebaseio.com",
+    "project_id": "onlinechatdemo-d7d59",
+    "storage_bucket": "onlinechatdemo-d7d59.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1041450871868:android:b8ae5e0bb9d84da6682739",
+        "android_client_info": {
+          "package_name": "com.lethdz.onlinechatdemo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1041450871868-0pvgg1hefqbv1relebl859pea6c1bbpv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lethdz.onlinechatdemo",
+            "certificate_hash": "08ddbabc0fa5878a795f9860cc0ca1d62370881b"
+          }
+        },
+        {
+          "client_id": "1041450871868-dt5f6i5qo29lmc9iuo50bhveuc6qck5g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDu__G1niVl6qztCjO7Jg99_lpKRuDlz-k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1041450871868-dt5f6i5qo29lmc9iuo50bhveuc6qck5g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
