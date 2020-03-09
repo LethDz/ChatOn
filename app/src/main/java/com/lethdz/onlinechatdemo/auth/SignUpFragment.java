@@ -1,14 +1,27 @@
-package com.lethdz.onlinechatdemo;
+package com.lethdz.onlinechatdemo.auth;
 
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.lethdz.onlinechatdemo.FirebaseSingleton;
+import com.lethdz.onlinechatdemo.R;
+import com.lethdz.onlinechatdemo.modal.User;
 
 
 /**
@@ -24,6 +37,9 @@ public class SignUpFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    // TODO: Declare an instance of FirebaseSingleton
+    private FirebaseSingleton instance;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -60,6 +76,8 @@ public class SignUpFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        // TODO: Initialize Firebase Auth
+        instance = FirebaseSingleton.getInstance();
     }
 
     @Override
@@ -67,6 +85,13 @@ public class SignUpFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.sign_up_field, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // signUp Function
+        signUp(view);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -79,12 +104,6 @@ public class SignUpFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
     }
 
     @Override
@@ -106,5 +125,44 @@ public class SignUpFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    /**
+     * signUp Function:
+     * @param view
+     * Register new user to the system. The records are stored in Firebase Cloud.
+     * Create a new createAccount method which takes in an email address and password,
+     * validates them and then creates a new user with the createUserWithEmailAndPassword method.
+     */
+    private static EditText txtEmail;
+    private static EditText txtPassword;
+    private static Button btnSignUp;
+
+    public void signUp(View view) {
+        txtEmail = view.findViewById(R.id.txt_EmailSignUp);
+        txtPassword = view.findViewById(R.id.txt_Password);
+        btnSignUp = view.findViewById(R.id.btn_SignUp);
+
+        btnSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                instance.getmAuth().createUserWithEmailAndPassword(
+                        txtEmail.getText().toString(),
+                        txtPassword.getText().toString())
+                        .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    // Sign in success, update UI with the signed-in user's information
+                                    Log.d("Info", "createUserWithEmail: success");
+                                    User user = instance.getCurrentUserInformation();
+                                } else {
+                                    Log.w("warn", "createUserWithEmail: failure", task.getException());
+                                    Toast.makeText(getContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
+        });
     }
 }

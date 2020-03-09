@@ -5,19 +5,16 @@ import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import android.view.LayoutInflater;
 import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
-    private FirebaseAuth mAuth;
+    private FirebaseSingleton instance;
     private TabLayout signInOption;
     private ViewPager viewPager;
 
@@ -35,8 +32,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
+        //Initialize Firebase SingleTon
+        instance = FirebaseSingleton.getInstance();
         //Setup Pager
         setupTabPager();
     }
@@ -72,6 +69,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseUser currentUser = instance.getmAuth().getCurrentUser();
     }
 }
