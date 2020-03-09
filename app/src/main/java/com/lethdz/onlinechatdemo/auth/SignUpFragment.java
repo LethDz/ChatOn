@@ -140,7 +140,7 @@ public class SignUpFragment extends Fragment {
 
     public void signUp(View view) {
         txtEmail = view.findViewById(R.id.txt_EmailSignUp);
-        txtPassword = view.findViewById(R.id.txt_Password);
+        txtPassword = view.findViewById(R.id.txt_PasswordSignUp);
         btnSignUp = view.findViewById(R.id.btn_SignUp);
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {
