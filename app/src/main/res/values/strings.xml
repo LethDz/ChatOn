@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">ChatOn!</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_profile">Profile</string>
+    <string name="action_signOut">Sign Out</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

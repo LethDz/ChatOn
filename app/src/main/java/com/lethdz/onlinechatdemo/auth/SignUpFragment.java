@@ -1,6 +1,7 @@
 package com.lethdz.onlinechatdemo.auth;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -20,6 +21,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.lethdz.onlinechatdemo.FirebaseSingleton;
+import com.lethdz.onlinechatdemo.HomeActivity;
 import com.lethdz.onlinechatdemo.R;
 import com.lethdz.onlinechatdemo.modal.User;
 
@@ -138,7 +140,7 @@ public class SignUpFragment extends Fragment {
     private static EditText txtPassword;
     private static Button btnSignUp;
 
-    public void signUp(View view) {
+    private void signUp(View view) {
         txtEmail = view.findViewById(R.id.txt_EmailSignUp);
         txtPassword = view.findViewById(R.id.txt_PasswordSignUp);
         btnSignUp = view.findViewById(R.id.btn_SignUp);
@@ -156,6 +158,8 @@ public class SignUpFragment extends Fragment {
                                     // Sign in success, update UI with the signed-in user's information
                                     Log.d("Info", "createUserWithEmail: success");
                                     User user = instance.getCurrentUserInformation();
+                                    Toast.makeText(getContext(), "Authentication success", Toast.LENGTH_SHORT).show();
+                                    updateUI(user);
                                 } else {
                                     Log.w("warn", "createUserWithEmail: failure", task.getException());
                                     Toast.makeText(getContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
@@ -164,5 +168,13 @@ public class SignUpFragment extends Fragment {
                         });
             }
         });
+    }
+
+    private void updateUI(User currentUser) {
+        if(currentUser != null) {
+            Intent intent = new Intent(getContext(), HomeActivity.class);
+            this.startActivity(intent);
+            getActivity().finish();
+        }
     }
 }

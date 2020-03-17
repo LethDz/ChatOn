@@ -1,11 +1,13 @@
 package com.lethdz.onlinechatdemo;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.auth.FirebaseUser;
+import com.lethdz.onlinechatdemo.modal.User;
+import com.lethdz.onlinechatdemo.viewpageradapter.ViewPagerAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.PagerAdapter;
@@ -69,6 +71,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = instance.getmAuth().getCurrentUser();
+        User currentUser = instance.getCurrentUserInformation();
+        updateUI(currentUser);
+    }
+
+    private void updateUI(User currentUser) {
+        if (currentUser != null) {
+            Intent intent = new Intent(this, HomeActivity.class);
+            this.startActivity(intent);
+            finish();
+        }
     }
 }
