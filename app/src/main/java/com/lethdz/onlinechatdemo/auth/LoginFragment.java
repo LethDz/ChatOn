@@ -1,6 +1,7 @@
 package com.lethdz.onlinechatdemo.auth;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -20,6 +21,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.lethdz.onlinechatdemo.FirebaseSingleton;
+import com.lethdz.onlinechatdemo.HomeActivity;
 import com.lethdz.onlinechatdemo.R;
 import com.lethdz.onlinechatdemo.modal.User;
 
@@ -154,6 +156,9 @@ public class LoginFragment extends Fragment {
                                 if(task.isSuccessful()) {
                                     Log.d("Tag", "signInWithEmail:success");
                                     User user = instance.getCurrentUserInformation();
+                                    Toast.makeText(getContext(), "Authentication success.", Toast.LENGTH_SHORT)
+                                            .show();
+                                    updateUI(user);
                                 } else {
                                     Log.w("waring", "signInWithEmail:failure", task.getException());
                                     Toast.makeText(getContext(), "Authentication failed.", Toast.LENGTH_SHORT)
@@ -164,5 +169,13 @@ public class LoginFragment extends Fragment {
 
             }
         });
+    }
+
+    private void updateUI(User currentUser) {
+        if(currentUser != null) {
+            Intent intent = new Intent(getContext(), HomeActivity.class);
+            this.startActivity(intent);
+            getActivity().finish();
+        }
     }
 }

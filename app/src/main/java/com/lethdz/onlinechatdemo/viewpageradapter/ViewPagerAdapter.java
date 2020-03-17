@@ -1,4 +1,4 @@
-package com.lethdz.onlinechatdemo;
+package com.lethdz.onlinechatdemo.viewpageradapter;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -19,7 +19,6 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                System.out.println("Hello");
                 LoginFragment loginFragment = new LoginFragment();
                 return loginFragment;
             case 1:
