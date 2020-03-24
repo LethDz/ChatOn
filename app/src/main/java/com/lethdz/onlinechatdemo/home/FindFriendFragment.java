@@ -1,16 +1,35 @@
 package com.lethdz.onlinechatdemo.home;
 
+import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.lethdz.onlinechatdemo.R;
+import com.lethdz.onlinechatdemo.modal.UserDetail;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,6 +50,15 @@ public class FindFriendFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    // Initiate firestore database
+    private FirebaseFirestore db;
+    // Initiate user list
+    private List<UserDetail> listUser = new ArrayList<>();
+    //Initiate RecylerView
+    RecyclerView recyclerView;
+    RecyclerView.LayoutManager layoutManager;
+    RecyclerView.Adapter adapter;
 
     public FindFriendFragment() {
         // Required empty public constructor
@@ -78,6 +106,13 @@ public class FindFriendFragment extends Fragment {
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setupRecyclerView(view);
+        setupSearch(view);
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
     }
@@ -101,5 +136,57 @@ public class FindFriendFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void setupSearch(View view) {
+        db = FirebaseFirestore.getInstance();
+        SearchView search = view.findViewById(R.id.s_searchFriend);
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                db.collection("UserDetail").whereEqualTo("displayName", query).get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if(task.isSuccessful()) {
+                                    listUser.clear();
+                                    if(!task.getResult().isEmpty()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            Log.d("Success", document.getId() + " => " + document.getData());
+                                            String uid = document.getData().get("uid").toString();
+                                            String email = document.getData().get("email").toString();
+                                            String displayName = document.getData().get("displayName").toString();
+                                            Uri photoUrl = document.getData().get("photoUri") == null ? null : (Uri) document.getData().get("photoUri");
+                                            listUser.add(new UserDetail(uid, email, displayName, photoUrl));
+                                            adapter.notifyDataSetChanged();
+                                        }
+                                    } else {
+                                        listUser.clear();
+                                        adapter.notifyDataSetChanged();
+                                        Log.d("Success", "Can not find the results", task.getException());
+                                        Toast.makeText(getContext(), "Can not find the results!!! ", Toast.LENGTH_LONG).show();
+                                    }
+                                } else {
+                                    Log.d("Fail", "Error getting document: ", task.getException());
+                                    Toast.makeText(getContext(), "Error getting result try again later!!! ", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+    }
+
+    public void setupRecyclerView(View view) {
+        recyclerView = view.findViewById(R.id.rv_Friend);
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new FindFriendRecylerViewAdapter(listUser);
+        recyclerView.setAdapter(adapter);
     }
 }

@@ -2,6 +2,7 @@
     <string name="app_name">ChatOn!</string>
     <string name="action_profile">Profile</string>
     <string name="action_signOut">Sign Out</string>
+    <string name="search_hint">Guess What</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
