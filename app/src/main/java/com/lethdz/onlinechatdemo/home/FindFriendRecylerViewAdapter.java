@@ -1,6 +1,5 @@
 package com.lethdz.onlinechatdemo.home;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,13 +11,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.lethdz.onlinechatdemo.R;
+import com.lethdz.onlinechatdemo.dao.FirebaseDAO;
 import com.lethdz.onlinechatdemo.modal.UserDetail;
 
 import java.util.List;
 
 public class FindFriendRecylerViewAdapter extends RecyclerView.Adapter<FindFriendRecylerViewAdapter.ViewHolder> {
     private List<UserDetail> listUser;
-
+    // Initiate firestore database
+    private FirebaseDAO firebaseDAO = new FirebaseDAO();
     public FindFriendRecylerViewAdapter(List<UserDetail> listUser) {
         this.listUser = listUser;
     }
@@ -41,7 +42,7 @@ public class FindFriendRecylerViewAdapter extends RecyclerView.Adapter<FindFrien
         } else {
             holder.avatar.setImageResource(userDetail.getPhotoURL().getPort());
         }
-        holder.displayName.setText(userDetail.getDisplayName());
+        holder.displayName.setText(userDetail.getEmail());
     }
 
 
@@ -66,7 +67,7 @@ public class FindFriendRecylerViewAdapter extends RecyclerView.Adapter<FindFrien
                 public void onClick(View v) {
                     int position = getAdapterPosition();
                     UserDetail user = listUser.get(position);
-                    Log.i("Info", user.getDisplayName());
+                    firebaseDAO.addFriend(user, v, listUser, FindFriendFragment.adapter);
                 }
             });
         }

@@ -1,25 +1,35 @@
 package com.lethdz.onlinechatdemo.modal;
 
+import com.google.firebase.Timestamp;
+
 import java.util.List;
 
-public class ChatDetail {
+public class ChatRoom {
     private String id;
     private String title;
     private String lastMessage;
-    private String timeStamp;
+    private Timestamp timeStamp;
     private List<User> members;
     private List<RoomMessage> roomMessages;
 
-    public ChatDetail() {
+    public ChatRoom() {
     }
 
-    public ChatDetail(String id, String title, String lastMessage, String timeStamp, List<User> members, List<RoomMessage> roomMessages) {
+    public ChatRoom(String id, String title, String lastMessage, Timestamp timeStamp, List<User> members, List<RoomMessage> roomMessages) {
         this.id = id;
         this.title = title;
         this.lastMessage = lastMessage;
         this.timeStamp = timeStamp;
         this.members = members;
         this.roomMessages = roomMessages;
+    }
+
+    public ChatRoom(String id, String title, String lastMessage, Timestamp timeStamp, List<User> members) {
+        this.id = id;
+        this.title = title;
+        this.lastMessage = lastMessage;
+        this.timeStamp = timeStamp;
+        this.members = members;
     }
 
     public String getId() {
@@ -46,11 +56,11 @@ public class ChatDetail {
         this.lastMessage = lastMessage;
     }
 
-    public String getTimeStamp() {
+    public Timestamp getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(String timeStamp) {
+    public void setTimeStamp(Timestamp timeStamp) {
         this.timeStamp = timeStamp;
     }
 
