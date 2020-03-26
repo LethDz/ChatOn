@@ -4,13 +4,22 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.lethdz.onlinechatdemo.R;
+import com.lethdz.onlinechatdemo.dao.FirebaseDAO;
+import com.lethdz.onlinechatdemo.modal.UserChatRoom;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,6 +40,16 @@ public class MessageHomeFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    //Initiate RecylerView
+    RecyclerView recyclerView;
+    RecyclerView.LayoutManager layoutManager;
+    public static RecyclerView.Adapter adapter;
+
+    // Initiate firestore database
+    private FirebaseDAO firebaseDAO = new FirebaseDAO();
+    // Initiate chat room list
+    private List<UserChatRoom> listChatRoom = new ArrayList<>();
 
     public MessageHomeFragment() {
         // Required empty public constructor
@@ -70,6 +89,13 @@ public class MessageHomeFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_message, container, false);
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setupRecyclerView(view);
+        getChatRoom(view);
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -101,5 +127,17 @@ public class MessageHomeFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void getChatRoom(View view) {
+        firebaseDAO.getChatRoom(adapter, listChatRoom, view);
+    }
+
+    public void setupRecyclerView(View view) {
+        recyclerView = view.findViewById(R.id.rv_ChatRoom);
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new MessageHomeRecyclerViewAdapter(listChatRoom);
+        recyclerView.setAdapter(adapter);
     }
 }

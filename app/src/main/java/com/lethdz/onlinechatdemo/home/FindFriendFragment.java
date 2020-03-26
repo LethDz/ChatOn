@@ -26,6 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.lethdz.onlinechatdemo.R;
+import com.lethdz.onlinechatdemo.dao.FirebaseDAO;
 import com.lethdz.onlinechatdemo.modal.UserDetail;
 
 import java.util.ArrayList;
@@ -52,13 +53,13 @@ public class FindFriendFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     // Initiate firestore database
-    private FirebaseFirestore db;
+    private FirebaseDAO firebaseDAO = new FirebaseDAO();
     // Initiate user list
     private List<UserDetail> listUser = new ArrayList<>();
     //Initiate RecylerView
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
-    RecyclerView.Adapter adapter;
+    public static RecyclerView.Adapter adapter;
 
     public FindFriendFragment() {
         // Required empty public constructor
@@ -138,40 +139,12 @@ public class FindFriendFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void setupSearch(View view) {
-        db = FirebaseFirestore.getInstance();
+    public void setupSearch(final View view) {
         SearchView search = view.findViewById(R.id.s_searchFriend);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                db.collection("UserDetail").whereEqualTo("displayName", query).get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if(task.isSuccessful()) {
-                                    listUser.clear();
-                                    if(!task.getResult().isEmpty()) {
-                                        for (QueryDocumentSnapshot document : task.getResult()) {
-                                            Log.d("Success", document.getId() + " => " + document.getData());
-                                            String uid = document.getData().get("uid").toString();
-                                            String email = document.getData().get("email").toString();
-                                            String displayName = document.getData().get("displayName").toString();
-                                            Uri photoUrl = document.getData().get("photoUri") == null ? null : (Uri) document.getData().get("photoUri");
-                                            listUser.add(new UserDetail(uid, email, displayName, photoUrl));
-                                            adapter.notifyDataSetChanged();
-                                        }
-                                    } else {
-                                        listUser.clear();
-                                        adapter.notifyDataSetChanged();
-                                        Log.d("Success", "Can not find the results", task.getException());
-                                        Toast.makeText(getContext(), "Can not find the results!!! ", Toast.LENGTH_LONG).show();
-                                    }
-                                } else {
-                                    Log.d("Fail", "Error getting document: ", task.getException());
-                                    Toast.makeText(getContext(), "Error getting result try again later!!! ", Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        });
+                firebaseDAO.searchFriend(query, adapter, listUser, view);
                 return false;
             }
 
