@@ -1,5 +1,6 @@
 package com.lethdz.onlinechatdemo.home;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,8 +8,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.lethdz.onlinechatdemo.MessageListActivity;
 import com.lethdz.onlinechatdemo.R;
 import com.lethdz.onlinechatdemo.modal.UserChatRoom;
 
@@ -17,9 +20,11 @@ import java.util.List;
 
 public class MessageHomeRecyclerViewAdapter extends RecyclerView.Adapter<MessageHomeRecyclerViewAdapter.ViewHolder> {
     private List<UserChatRoom> listChatRoom;
+    private FragmentActivity activity;
 
-    public MessageHomeRecyclerViewAdapter(List<UserChatRoom> listChatRoom) {
+    public MessageHomeRecyclerViewAdapter(List<UserChatRoom> listChatRoom, FragmentActivity activity) {
         this.listChatRoom = listChatRoom;
+        this.activity = activity;
     }
 
     @NonNull
@@ -36,7 +41,7 @@ public class MessageHomeRecyclerViewAdapter extends RecyclerView.Adapter<Message
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         UserChatRoom chatRoom = listChatRoom.get(position);
 
-        String pattern = "yyyy-MM-dd HH:mm:ss";
+        String pattern = "EEE-HH:mm";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 
         holder.avatar.setImageResource(R.drawable.chatroom_icon);
@@ -56,7 +61,7 @@ public class MessageHomeRecyclerViewAdapter extends RecyclerView.Adapter<Message
         public TextView lastMessage;
         public TextView timeStamp;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull final View itemView) {
             super(itemView);
             avatar = itemView.findViewById(R.id.iv_avatar);
             displayText = itemView.findViewById(R.id.txt_displayName);
@@ -69,6 +74,9 @@ public class MessageHomeRecyclerViewAdapter extends RecyclerView.Adapter<Message
                     int position = getAdapterPosition();
                     UserChatRoom chatRoom = listChatRoom.get(position);
                     String documentName = chatRoom.getDocumentName();
+                    Intent intent = new Intent(activity, MessageListActivity.class);
+                    intent.putExtra("DOCUMENT_NAME", documentName);
+                    activity.startActivity(intent);
                 }
             });
         }

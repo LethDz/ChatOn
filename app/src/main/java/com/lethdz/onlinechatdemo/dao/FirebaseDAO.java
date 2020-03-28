@@ -1,8 +1,10 @@
 package com.lethdz.onlinechatdemo.dao;
 
+import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,7 +24,10 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.lethdz.onlinechatdemo.MessageListActivity;
+import com.lethdz.onlinechatdemo.R;
 import com.lethdz.onlinechatdemo.modal.ChatRoom;
+import com.lethdz.onlinechatdemo.modal.RoomMessage;
 import com.lethdz.onlinechatdemo.modal.User;
 import com.lethdz.onlinechatdemo.modal.UserChatRoom;
 import com.lethdz.onlinechatdemo.modal.UserDetail;
@@ -35,6 +40,7 @@ public class FirebaseDAO {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private boolean duplicatedFriend = false;
+    private boolean firstLoadMessage = true;
 
     public void addFriend(UserDetail user, View v, List<UserDetail> getListUser, RecyclerView.Adapter getAdapter) {
         final UserDetail userAdding = user;
@@ -62,7 +68,7 @@ public class FirebaseDAO {
         List<User> members = new ArrayList<User>();
         members.add(new User(user.getUid(), user.getEmail()));
         members.add(new User(auth.getCurrentUser().getUid(), auth.getCurrentUser().getEmail()));
-        ChatRoom chatRoom = new ChatRoom(documentName, "", "", timeCreated, members);
+        ChatRoom chatRoom = new ChatRoom(documentName, "", "", timeCreated, members, new ArrayList<RoomMessage>());
 
         // Update the Friend.
         DocumentReference userDetailRef = db.collection("UserDetail").document(user.getUid());
@@ -182,5 +188,78 @@ public class FirebaseDAO {
                 }
             }
         });
+    }
+
+    public void getRoomMessage(String documentName, final List<RoomMessage> messages, final RecyclerView.Adapter adapter, final Activity activity) {
+        DocumentReference docRef = db.collection("ChatRoom").document(documentName);
+        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                // Check for error
+                if (e != null) {
+                    Log.w("Fail", "Listen failed.", e);
+                    Toast.makeText(activity, "Error in getting chat room please try again later", Toast.LENGTH_LONG).show();
+                    return ;
+                }
+
+                // Check for change at where local or server.
+                String source = documentSnapshot != null && documentSnapshot.getMetadata().hasPendingWrites()
+                        ? "Local" : "Server";
+
+                // Check for data is not null and display the new list to the screen.
+                if (documentSnapshot != null && documentSnapshot.exists()) {
+                    ChatRoom chatRoom = documentSnapshot.toObject(ChatRoom.class);
+                    MessageListActivity.setChatRoom(chatRoom);
+                    Log.d("Get Data", source + " data: " + documentSnapshot.getData());
+                    //check data and the first load
+                    if(!documentSnapshot.getData().isEmpty()) {
+                        if (isFirstLoadMessage()) {
+                            // set title of the chat room.
+                            TextView txtTitle = activity.findViewById(R.id.txt_chatTitle);
+                            String title = "";
+                            String currentUser = auth.getCurrentUser().getUid();
+                            for (User element:
+                                    chatRoom.getMembers()) {
+                                if (!element.getUid().equals(currentUser)) {
+                                    title += element.getEmail();
+                                    txtTitle.setText(title);
+                                }
+                            }
+                            messages.addAll(chatRoom.getRoomMessages());
+                            adapter.notifyDataSetChanged();
+                            setFirstLoadMessage(false);
+                        } else {
+                            messages.add(chatRoom.getRoomMessages().get(chatRoom.getRoomMessages().size() - 1));
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                } else {
+                    Log.d("Get Data", source + " data: null");
+                }
+            }
+        });
+    }
+
+    public void sendMessage(String documentName, String message, final List<RoomMessage> messages) {
+        String id;
+        if(messages.size() == 0) {
+            id = "1";
+        } else {
+            id = Integer.parseInt(messages.get(messages.size() - 1).getId()) + 1 + "";
+        }
+        RoomMessage roomMessage = new RoomMessage(id, auth.getCurrentUser().getUid(), message, new Timestamp(new Date()));
+        DocumentReference userDetailRef = db.collection("ChatRoom").document(documentName);
+        userDetailRef.update("roomMessages", FieldValue.arrayUnion(roomMessage),
+                "lastMessage", message,
+                "timeStamp", new Timestamp(new Date()));
+        DocumentReference docRef = db.collection("UserDetail").document(auth.getCurrentUser().getUid());
+    }
+
+    public boolean isFirstLoadMessage() {
+        return firstLoadMessage;
+    }
+
+    public void setFirstLoadMessage(boolean firstLoadMessage) {
+        this.firstLoadMessage = firstLoadMessage;
     }
 }

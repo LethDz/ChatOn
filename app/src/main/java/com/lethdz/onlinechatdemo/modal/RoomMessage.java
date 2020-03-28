@@ -1,15 +1,17 @@
 package com.lethdz.onlinechatdemo.modal;
 
+import com.google.firebase.Timestamp;
+
 public class RoomMessage {
     private String id;
     private String owner;
     private String message;
-    private String timeStamp;
+    private Timestamp timeStamp;
 
     public RoomMessage() {
     }
 
-    public RoomMessage(String id, String owner, String message, String timeStamp) {
+    public RoomMessage(String id, String owner, String message, Timestamp timeStamp) {
         this.id = id;
         this.owner = owner;
         this.message = message;
@@ -40,11 +42,11 @@ public class RoomMessage {
         this.message = message;
     }
 
-    public String getTimeStamp() {
+    public Timestamp getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(String timeStamp) {
+    public void setTimeStamp(Timestamp timeStamp) {
         this.timeStamp = timeStamp;
     }
 }
