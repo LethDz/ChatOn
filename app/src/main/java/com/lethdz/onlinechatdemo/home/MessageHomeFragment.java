@@ -137,7 +137,7 @@ public class MessageHomeFragment extends Fragment {
         recyclerView = view.findViewById(R.id.rv_ChatRoom);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new MessageHomeRecyclerViewAdapter(listChatRoom);
+        adapter = new MessageHomeRecyclerViewAdapter(listChatRoom, getActivity());
         recyclerView.setAdapter(adapter);
     }
 }
