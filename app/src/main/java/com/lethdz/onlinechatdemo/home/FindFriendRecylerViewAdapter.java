@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.lethdz.onlinechatdemo.HomeActivity;
 import com.lethdz.onlinechatdemo.R;
 import com.lethdz.onlinechatdemo.dao.FirebaseDAO;
 import com.lethdz.onlinechatdemo.modal.UserDetail;
@@ -56,7 +57,7 @@ public class FindFriendRecylerViewAdapter extends RecyclerView.Adapter<FindFrien
         public TextView displayName;
         public Button btnAdd;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull final View itemView) {
             super(itemView);
             avatar = itemView.findViewById(R.id.iv_avatar);
             displayName = itemView.findViewById(R.id.txt_displayName);
@@ -67,7 +68,7 @@ public class FindFriendRecylerViewAdapter extends RecyclerView.Adapter<FindFrien
                 public void onClick(View v) {
                     int position = getAdapterPosition();
                     UserDetail user = listUser.get(position);
-                    firebaseDAO.addFriend(user, v, listUser, FindFriendFragment.adapter);
+                    firebaseDAO.addFriend(user, v, listUser, FindFriendFragment.adapter, HomeActivity.activity);
                 }
             });
         }

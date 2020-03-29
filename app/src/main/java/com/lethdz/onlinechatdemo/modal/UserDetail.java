@@ -28,6 +28,14 @@ public class UserDetail {
         this.photoURL = photoURL;
     }
 
+    public UserDetail(String uid, String email, String displayName, Uri photoURL, List<UserChatRoom> chatRoom) {
+        this.uid = uid;
+        this.email = email;
+        this.displayName = displayName;
+        this.photoURL = photoURL;
+        this.chatRoom = chatRoom;
+    }
+
     public String getUid() {
         return uid;
     }
