@@ -17,7 +17,6 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
     private FirebaseSingleton instance;
-    private TabLayout signInOption;
     private ViewPager viewPager;
 
     @Override
@@ -42,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected void setupTabPager() {
         //Initialize the parameter
-        signInOption = findViewById(R.id.tl_SignInOption);
+        TabLayout signInOption = findViewById(R.id.tl_SignInOption);
         viewPager = findViewById(R.id.viewPager);
         PagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), signInOption.getTabCount());
         //Set Adapter
@@ -53,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
+                Common.closeSoftKeyboard(MainActivity.this);
             }
 
             @Override

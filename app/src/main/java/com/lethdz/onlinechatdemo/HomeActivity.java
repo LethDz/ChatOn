@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -18,15 +19,15 @@ import com.lethdz.onlinechatdemo.viewpageradapter.ViewPagerHomeAdapter;
 
 public class HomeActivity extends AppCompatActivity {
     private FirebaseSingleton instance;
-    private TabLayout homeOption;
     private ViewPager viewPagerHome;
     private Button btnAction;
+    public static Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
+        activity = this;
         //Initialize Firebase SingleTon
         instance = FirebaseSingleton.getInstance();
         //Setup Pager
@@ -67,17 +68,20 @@ public class HomeActivity extends AppCompatActivity {
 
     private void setupTabPager() {
         //Initialize the parameter
-        homeOption = findViewById(R.id.tl_HomeOption);
+        TabLayout homeOption = findViewById(R.id.tl_HomeOption);
         viewPagerHome = findViewById(R.id.viewPagerHome);
         PagerAdapter adapter = new ViewPagerHomeAdapter(getSupportFragmentManager(), homeOption.getTabCount());
         //Set Adapter
         viewPagerHome.setAdapter(adapter);
-        viewPagerHome.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(homeOption));
+        viewPagerHome.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(homeOption) {
+
+        });
         //Add onSelect Listener
         homeOption.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPagerHome.setCurrentItem(tab.getPosition());
+                Common.closeSoftKeyboard(HomeActivity.this);
             }
 
             @Override
