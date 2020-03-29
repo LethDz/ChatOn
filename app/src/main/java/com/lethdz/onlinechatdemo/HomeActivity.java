@@ -54,7 +54,9 @@ public class HomeActivity extends AppCompatActivity {
                             HomeActivity.this.startActivity(intent);
                             finish();
                         } else if (item.getTitle() == getString(R.string.action_profile)) {
-
+                            Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
+                            HomeActivity.this.startActivity(intent);
+                            finish();
                         }
                         return true;
                     }

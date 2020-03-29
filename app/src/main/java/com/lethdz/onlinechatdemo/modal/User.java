@@ -7,7 +7,7 @@ public class User {
     private String email;
     private Uri photoUrl;
     private boolean emailVerified;
-    private String IdToken;
+    private String uid;
 
 
     public User() {
@@ -18,6 +18,19 @@ public class User {
         this.email = email;
         this.photoUrl = photoUrl;
         this.emailVerified = emailVerified;
+    }
+
+    public User(String name, String email, Uri photoUrl, boolean emailVerified, String uid) {
+        this.name = name;
+        this.email = email;
+        this.photoUrl = photoUrl;
+        this.emailVerified = emailVerified;
+        this.uid = uid;
+    }
+
+    public User(String uid, String email) {
+        this.email = email;
+        this.uid = uid;
     }
 
     public String getName() {
@@ -52,11 +65,8 @@ public class User {
         this.emailVerified = emailVerified;
     }
 
-    public String getIdToken() {
-        return IdToken;
+    public String getUid() {
+        return uid;
     }
 
-    public void setIdToken(String idToken) {
-        IdToken = idToken;
-    }
 }

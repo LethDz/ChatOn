@@ -1,27 +1,29 @@
 package com.lethdz.onlinechatdemo.modal;
 
+import com.google.firebase.Timestamp;
+
 public class UserChatRoom {
-    private String collectionName;
+    private String documentName;
     private String title;
     private String lastMessage;
-    private String timeStamp;
+    private Timestamp timeStamp;
 
     public UserChatRoom() {
     }
 
-    public UserChatRoom(String collectionName, String title, String lastMessage, String timeStamp) {
-        this.collectionName = collectionName;
+    public UserChatRoom(String documentName, String title, String lastMessage, Timestamp timeStamp) {
+        this.documentName = documentName;
         this.title = title;
         this.lastMessage = lastMessage;
         this.timeStamp = timeStamp;
     }
 
-    public String getCollectionName() {
-        return collectionName;
+    public String getDocumentName() {
+        return documentName;
     }
 
-    public void setCollectionName(String collectionName) {
-        this.collectionName = collectionName;
+    public void setDocumentName(String documentName) {
+        this.documentName = documentName;
     }
 
     public String getTitle() {
@@ -40,11 +42,11 @@ public class UserChatRoom {
         this.lastMessage = lastMessage;
     }
 
-    public String getTimeStamp() {
+    public Timestamp getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(String timeStamp) {
+    public void setTimeStamp(Timestamp timeStamp) {
         this.timeStamp = timeStamp;
     }
 }
