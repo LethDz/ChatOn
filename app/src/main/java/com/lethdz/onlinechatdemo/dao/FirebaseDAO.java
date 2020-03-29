@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,11 +43,15 @@ public class FirebaseDAO {
     private boolean duplicatedFriend = false;
     private boolean firstLoadMessage = true;
 
-    public void addFriend(UserDetail user, View v, List<UserDetail> getListUser, RecyclerView.Adapter getAdapter) {
+    public void addFriend(UserDetail user, View v, List<UserDetail> getListUser, RecyclerView.Adapter getAdapter, Activity activity) {
         final UserDetail userAdding = user;
         final View view = v;
         final RecyclerView.Adapter adapter = getAdapter;
         final List<UserDetail> listUser = getListUser;
+        final ProgressBar progressBar = activity.findViewById(R.id.toolbarprogresshome);
+        progressBar.setProgress(0);
+        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setProgress(60, true);
 
         String documentName = user.getUid() + auth.getCurrentUser().getUid();
         Timestamp timeCreated = new Timestamp(new Date());
@@ -93,19 +98,25 @@ public class FirebaseDAO {
                     Log.d("Fail", "Adding Friend Error ", task.getException());
                     Toast.makeText(view.getContext(), "Adding Friend Error!!", Toast.LENGTH_LONG).show();
                 }
+                progressBar.setProgress(100, true);
+                progressBar.setVisibility(View.INVISIBLE);
             }
         });
     }
 
-    public void searchFriend(String query, RecyclerView.Adapter getAdapter, List<UserDetail> getlistUser, View v) {
+    public void searchFriend(String query, RecyclerView.Adapter getAdapter, List<UserDetail> getListUser, View v, Activity activity) {
         final RecyclerView.Adapter adapter = getAdapter;
-        final List<UserDetail> listUser = getlistUser;
+        final List<UserDetail> listUser = getListUser;
         final View view = v;
-
+        final ProgressBar progressBar = activity.findViewById(R.id.toolbarprogresshome);
+        progressBar.setProgress(0);
+        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setProgress(60, true);
         db.collection("UserDetail").whereEqualTo("email", query).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        progressBar.setProgress(100, true);
                         if(task.isSuccessful()) {
                             listUser.clear();
                             if(!task.getResult().isEmpty()) {
@@ -155,6 +166,7 @@ public class FirebaseDAO {
                             Log.d("Fail", "Error getting document: ", task.getException());
                             Toast.makeText(view.getContext(), "Error getting result try again later!!! ", Toast.LENGTH_LONG).show();
                         }
+                        progressBar.setVisibility(View.INVISIBLE);
                     }
                 });
     }
@@ -261,5 +273,15 @@ public class FirebaseDAO {
 
     public void setFirstLoadMessage(boolean firstLoadMessage) {
         this.firstLoadMessage = firstLoadMessage;
+    }
+
+    public void signUp(User user) {
+        String displayName = user.getEmail().substring(0, user.getEmail().indexOf("@"));
+        UserDetail userDetail = new UserDetail(user.getUid(),
+                user.getEmail(),
+                displayName,
+                null,
+                new ArrayList<UserChatRoom>());
+        db.collection("UserDetail").document(user.getUid()).set(userDetail);
     }
 }
