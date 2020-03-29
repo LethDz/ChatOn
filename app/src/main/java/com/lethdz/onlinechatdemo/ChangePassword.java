@@ -32,8 +32,9 @@ public class ChangePassword extends AppCompatActivity {
         if(np.equals(cp)&&!np.equals("")){
             user.updatePassword(np);
             Toast.makeText(this, "Change password successfully", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(this,Profile.class);
+            Intent intent = new Intent(this,ProfileActivity.class);
             startActivity(intent);
+            finish();
         }else{
             Toast.makeText(this, "Password not matched", Toast.LENGTH_LONG).show();
         }

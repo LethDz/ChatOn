@@ -32,7 +32,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class ProfileActivity extends AppCompatActivity {
-
     TextView textTopUsername, textMidUsername;
     EditText textChangeUsername, textChangePassword, textChangeEmail;
     private FirebaseSingleton instance;
