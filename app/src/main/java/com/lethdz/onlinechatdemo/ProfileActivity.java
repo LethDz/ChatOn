@@ -213,7 +213,7 @@ public class ProfileActivity extends AppCompatActivity {
             this.startActivity(intent);
             finish();
         } else {
-            if (user.getName().trim().equals("")) {
+            if (user.getName() == null || user.getName().equals("")) {
                 textTopUsername.setText(user.getEmail());
                 textMidUsername.setText(user.getEmail());
             } else {
@@ -222,7 +222,7 @@ public class ProfileActivity extends AppCompatActivity {
                 textChangeUsername.setText(user.getName());
             }
             textChangeEmail.setText(user.getEmail());
-            if(updateUser.getPhotoUrl()!=null){
+            if(updateUser.getPhotoUrl() != null){
                 Glide.with(this).load(updateUser.getPhotoUrl()).into(imageProfilePicture);
             }
         }

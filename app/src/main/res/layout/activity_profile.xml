@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,7 +20,7 @@
         app:layout_constraintVertical_bias="0.0">
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/img_profileBackIcon"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:onClick="backOnClick"
@@ -59,7 +59,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
-        android:layout_height="302dp"
+        android:layout_height="wrap_content"
         android:background="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -71,7 +71,7 @@
         <ImageView
             android:id="@+id/imageProfilePicture"
             android:layout_width="215dp"
-            android:layout_height="209dp"
+            android:layout_height="215dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -94,9 +94,10 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.943"
+            app:layout_constraintTop_toBottomOf="@+id/imageProfilePicture"
+            app:layout_constraintVertical_bias="0.105"
             app:layout_constraintWidth_max="200sp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
