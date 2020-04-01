@@ -9,10 +9,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.tabs.TabLayout;
 import com.lethdz.onlinechatdemo.modal.User;
 import com.lethdz.onlinechatdemo.viewpageradapter.ViewPagerHomeAdapter;
@@ -20,7 +21,7 @@ import com.lethdz.onlinechatdemo.viewpageradapter.ViewPagerHomeAdapter;
 public class HomeActivity extends AppCompatActivity {
     private FirebaseSingleton instance;
     private ViewPager viewPagerHome;
-    private Button btnAction;
+    private ImageView btnAction;
     public static Activity activity;
 
     @Override
@@ -112,8 +113,16 @@ public class HomeActivity extends AppCompatActivity {
             this.startActivity(intent);
             finish();
         } else {
-            TextView txtName = findViewById(R.id.txt_home_displayName);
-            txtName.setText(currentUser.getEmail());
+            if (currentUser.getPhotoUrl() == null || currentUser.getName().trim().equals("")) {
+                Intent intent = new Intent(this, ProfileActivity.class);
+                this.startActivity(intent);
+                finish();
+            } else {
+                ImageView btnAction = findViewById(R.id.btn_actionMenu);
+                Glide.with(this).load(currentUser.getPhotoUrl()).into(btnAction);
+                TextView txtName = findViewById(R.id.txt_home_displayName);
+                txtName.setText(currentUser.getEmail());
+            }
         }
     }
 }

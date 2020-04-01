@@ -1,6 +1,5 @@
 package com.lethdz.onlinechatdemo.modal;
 
-import android.net.Uri;
 
 import java.util.List;
 
@@ -8,7 +7,7 @@ public class UserDetail {
     private String uid;
     private String email;
     private String displayName;
-    private Uri photoURL;
+    private String photoURL;
     private List<UserChatRoom> chatRoom;
 
     public UserDetail() {
@@ -21,14 +20,14 @@ public class UserDetail {
         this.chatRoom = chatRoom;
     }
 
-    public UserDetail(String uid, String email, String displayName, Uri photoURL) {
+    public UserDetail(String uid, String email, String displayName, String photoURL) {
         this.uid = uid;
         this.email = email;
         this.displayName = displayName;
         this.photoURL = photoURL;
     }
 
-    public UserDetail(String uid, String email, String displayName, Uri photoURL, List<UserChatRoom> chatRoom) {
+    public UserDetail(String uid, String email, String displayName, String photoURL, List<UserChatRoom> chatRoom) {
         this.uid = uid;
         this.email = email;
         this.displayName = displayName;
@@ -56,11 +55,11 @@ public class UserDetail {
         this.displayName = displayName;
     }
 
-    public Uri getPhotoURL() {
+    public String getPhotoURL() {
         return photoURL;
     }
 
-    public void setPhotoURL(Uri photoURL) {
+    public void setPhotoURL(String photoURL) {
         this.photoURL = photoURL;
     }
 

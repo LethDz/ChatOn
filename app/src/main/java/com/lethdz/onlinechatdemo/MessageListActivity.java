@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -24,6 +25,7 @@ public class MessageListActivity extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
     private FirebaseDAO firebaseDAO = new FirebaseDAO();
     private String documentName;
+    public static Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +35,7 @@ public class MessageListActivity extends AppCompatActivity {
         Intent intent = getIntent();
         this.documentName = intent.getStringExtra("DOCUMENT_NAME");
         getChatRoom(documentName, messageList);
+        activity = this;
     }
 
     private void getChatRoom(String documentName, List<RoomMessage> messages) {
@@ -41,8 +44,10 @@ public class MessageListActivity extends AppCompatActivity {
 
     public void sendMessage(View view) {
         EditText txtMessage = findViewById(R.id.edittext_chatbox);
-        firebaseDAO.sendMessage(this.documentName, txtMessage.getText().toString(), messageList);
-        txtMessage.getText().clear();
+        if (!txtMessage.getText().toString().equals("")) {
+            firebaseDAO.sendMessage(this.documentName, txtMessage.getText().toString(), messageList);
+            txtMessage.getText().clear();
+        }
     }
 
     public void backToHome(View view) {

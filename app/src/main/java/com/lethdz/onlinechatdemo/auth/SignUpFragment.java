@@ -151,37 +151,43 @@ public class SignUpFragment extends Fragment {
         txtPassword = view.findViewById(R.id.txt_PasswordSignUp);
         btnSignUp = view.findViewById(R.id.btn_SignUp);
         progressBar = getActivity().findViewById(R.id.toolbarprogress);
-
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                txtEmail.onEditorAction(EditorInfo.IME_ACTION_DONE);
-                txtPassword.onEditorAction(EditorInfo.IME_ACTION_DONE);
-                progressBar.setVisibility(View.VISIBLE);
-                progressBar.setProgress(60, true);
-                instance.getmAuth().createUserWithEmailAndPassword(
-                        txtEmail.getText().toString(),
-                        txtPassword.getText().toString())
-                        .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    Log.d("Info", "createUserWithEmail: success");
-                                    User user = instance.getCurrentUserInformation();
-                                    firebaseDAO.signUp(user);
-                                    progressBar.setProgress(100, true);
-                                    Toast.makeText(getContext(), "Authentication success", Toast.LENGTH_SHORT).show();
-                                    updateUI(user);
-                                } else {
-                                    Log.w("warn", "createUserWithEmail: failure", task.getException());
-                                    Toast.makeText(getContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
-                                    progressBar.setProgress(100, true);
+                if (txtEmail.getText().toString().equals("") || txtPassword.getText().toString().equals("")) {
+                    Toast.makeText(getContext(), "Please Enter email or password.", Toast.LENGTH_SHORT)
+                            .show();
+                } else {
+                    txtEmail.onEditorAction(EditorInfo.IME_ACTION_DONE);
+                    txtPassword.onEditorAction(EditorInfo.IME_ACTION_DONE);
+                    progressBar.setProgress(0);
+                    progressBar.setVisibility(View.VISIBLE);
+                    progressBar.setProgress(60, true);
+                    instance.getmAuth().createUserWithEmailAndPassword(
+                            txtEmail.getText().toString(),
+                            txtPassword.getText().toString())
+                            .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        // Sign in success, update UI with the signed-in user's information
+                                        Log.d("Info", "createUserWithEmail: success");
+                                        User user = instance.getCurrentUserInformation();
+                                        firebaseDAO.signUp(user);
+                                        progressBar.setProgress(100, true);
+                                        Toast.makeText(getContext(), "Authentication success", Toast.LENGTH_SHORT).show();
+                                        updateUI(user);
+                                    } else {
+                                        Log.w("warn", "createUserWithEmail: failure", task.getException());
+                                        Toast.makeText(getContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
+                                        progressBar.setProgress(100, true);
+                                        progressBar.setVisibility(View.INVISIBLE);
+                                    }
                                 }
-                            }
-                        });
+                            });
+                }
             }
-        });
+            });
     }
 
     private void updateUI(User currentUser) {

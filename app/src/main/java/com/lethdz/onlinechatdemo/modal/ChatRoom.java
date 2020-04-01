@@ -9,13 +9,13 @@ public class ChatRoom {
     private String title;
     private String lastMessage;
     private Timestamp timeStamp;
-    private List<User> members;
+    private List<UserDetail> members;
     private List<RoomMessage> roomMessages;
 
     public ChatRoom() {
     }
 
-    public ChatRoom(String id, String title, String lastMessage, Timestamp timeStamp, List<User> members, List<RoomMessage> roomMessages) {
+    public ChatRoom(String id, String title, String lastMessage, Timestamp timeStamp, List<UserDetail> members, List<RoomMessage> roomMessages) {
         this.id = id;
         this.title = title;
         this.lastMessage = lastMessage;
@@ -24,7 +24,7 @@ public class ChatRoom {
         this.roomMessages = roomMessages;
     }
 
-    public ChatRoom(String id, String title, String lastMessage, Timestamp timeStamp, List<User> members) {
+    public ChatRoom(String id, String title, String lastMessage, Timestamp timeStamp, List<UserDetail> members) {
         this.id = id;
         this.title = title;
         this.lastMessage = lastMessage;
@@ -64,11 +64,11 @@ public class ChatRoom {
         this.timeStamp = timeStamp;
     }
 
-    public List<User> getMembers() {
+    public List<UserDetail> getMembers() {
         return members;
     }
 
-    public void setMembers(List<User> members) {
+    public void setMembers(List<UserDetail> members) {
         this.members = members;
     }
 

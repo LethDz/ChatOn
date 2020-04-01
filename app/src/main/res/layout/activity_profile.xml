@@ -6,6 +6,20 @@
     android:layout_height="match_parent"
     android:background="@drawable/fade_background"
     tools:context=".ProfileActivity">
+    <ProgressBar
+        android:id="@+id/toolbarProgressProfile"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:progressTint="#2962FF"
+        android:visibility="invisible"
+        android:max="100"
+        android:min="0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -15,7 +29,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
 
-        
+
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -25,6 +39,7 @@
             android:id="@+id/imageBack"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginVertical="10dp"
             android:onClick="backOnClick"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -74,6 +89,7 @@
             android:id="@+id/imageProfilePicture"
             android:layout_width="215dp"
             android:layout_height="215dp"
+            android:foreground="@drawable/rounded_fg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -91,7 +107,7 @@
             android:autoText="false"
             android:maxLines="1"
             android:text="username"
-            android:textColor="#000000"
+            android:textColor="#0091EA"
             android:textSize="30sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -133,8 +149,9 @@
                 android:autoSizeTextType="none"
                 android:onClick="changePPOnClick"
                 android:paddingTop="20dp"
-                android:text="Change Profile Picture"
+                android:text="Click here to change profile picture"
                 android:textAlignment="center"
+                android:textColor="#2962FF"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />

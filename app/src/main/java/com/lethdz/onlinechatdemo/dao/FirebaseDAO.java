@@ -70,9 +70,12 @@ public class FirebaseDAO {
                 timeCreated);
 
         // Value for the chat room
-        List<User> members = new ArrayList<User>();
-        members.add(new User(user.getUid(), user.getEmail()));
-        members.add(new User(auth.getCurrentUser().getUid(), auth.getCurrentUser().getEmail()));
+        List<UserDetail> members = new ArrayList<UserDetail>();
+        members.add(new UserDetail(user.getUid(), user.getEmail(), user.getDisplayName(), user.getPhotoURL()));
+        members.add(new UserDetail(auth.getCurrentUser().getUid(),
+                auth.getCurrentUser().getEmail(),
+                auth.getCurrentUser().getDisplayName(),
+                auth.getCurrentUser().getPhotoUrl().toString()));
         ChatRoom chatRoom = new ChatRoom(documentName, "", "", timeCreated, members, new ArrayList<RoomMessage>());
 
         // Update the Friend.
@@ -146,7 +149,7 @@ public class FirebaseDAO {
                                                     if (!duplicatedFriend) {
                                                         String email = document.getData().get("email").toString();
                                                         String displayName = document.getData().get("displayName").toString();
-                                                        Uri photoUrl = document.getData().get("photoURL") == null ? null : (Uri) document.getData().get("photoURL");
+                                                        String photoUrl =  document.getData().get("photoURL").toString();
                                                         listUser.add(new UserDetail(uid, email, displayName, photoUrl));
                                                         adapter.notifyDataSetChanged();
                                                     } else {
@@ -230,7 +233,7 @@ public class FirebaseDAO {
                             TextView txtTitle = activity.findViewById(R.id.txt_chatTitle);
                             String title = "";
                             String currentUser = auth.getCurrentUser().getUid();
-                            for (User element:
+                            for (UserDetail element:
                                     chatRoom.getMembers()) {
                                 if (!element.getUid().equals(currentUser)) {
                                     title += element.getEmail();
@@ -283,5 +286,9 @@ public class FirebaseDAO {
                 null,
                 new ArrayList<UserChatRoom>());
         db.collection("UserDetail").document(user.getUid()).set(userDetail);
+    }
+
+    public void updateProfile(String name, Uri photoUri, String userId) {
+        db.collection("UserDetail").document(userId).update("displayName", name, "photoURL", photoUri.toString());
     }
 }
