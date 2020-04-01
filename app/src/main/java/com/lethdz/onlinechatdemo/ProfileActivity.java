@@ -32,7 +32,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class ProfileActivity extends AppCompatActivity {
-    TextView textTopUsername, textMidUsername;
+    TextView textTopUsername, textMidUsername, textChangeProfilePicture;
     EditText textChangeUsername, textChangePassword, textChangeEmail;
     private FirebaseSingleton instance;
     User currentUser;
@@ -41,7 +41,7 @@ public class ProfileActivity extends AppCompatActivity {
     private FirebaseStorage storage;
     private StorageReference mStorageRef;
     Uri downloadFile = null;
-    ImageView imageProfilePicture;
+    ImageView imageProfilePicture,imageBack;
     ByteArrayOutputStream baos;
     Bitmap bm = null;
     @Override
@@ -54,13 +54,12 @@ public class ProfileActivity extends AppCompatActivity {
         textChangeUsername = findViewById(R.id.textChangeUsername);
         textChangePassword = findViewById(R.id.textChangePassword);
         textChangeEmail = findViewById(R.id.textChangeEmail);
+        textChangeProfilePicture = findViewById(R.id.textChangeProfilePicture);
         buttonLogOut = findViewById(R.id.buttonLogOut);
         buttonSave = findViewById(R.id.buttonSave);
         buttonCancel = findViewById(R.id.buttonCancel);
         imageProfilePicture = findViewById(R.id.imageProfilePicture);
-        buttonSave.setVisibility(View.INVISIBLE);
-        buttonCancel.setVisibility(View.INVISIBLE);
-
+        imageBack = findViewById(R.id.imageBack);
         instance = FirebaseSingleton.getInstance();
         updateUser = instance.getmAuth().getCurrentUser();
         currentUser = instance.getCurrentUserInformation();
@@ -68,7 +67,6 @@ public class ProfileActivity extends AppCompatActivity {
         mStorageRef = storage.getReference();
         baos = new ByteArrayOutputStream();
 
-        updateUI(currentUser);
         textChangeUsername.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -77,8 +75,10 @@ public class ProfileActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                buttonSave.setVisibility(View.VISIBLE);
-                buttonCancel.setVisibility(View.VISIBLE);
+                if(downloadFile!=null && !textChangeUsername.getText().toString().trim().equals("")){
+                    buttonSave.setVisibility(View.VISIBLE);
+                    buttonCancel.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
@@ -103,6 +103,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             }
         });
+        updateUI(currentUser);
 
     }
 
@@ -115,19 +116,33 @@ public class ProfileActivity extends AppCompatActivity {
     }
     //------- Save button -------
     public void saveOnClick(View view) {
-        UserProfileChangeRequest profileChangeRequest;
-        //-----No Change to Profile Picture
-        if(downloadFile == null){
-            profileChangeRequest = new UserProfileChangeRequest.Builder()
-                    .setDisplayName(textChangeUsername.getText().toString())
-                    .build();
-        }else{
-            //Upload picture to Firebase storage and update the profile picture
-            Log.i("NOTE@@@",downloadFile.toString());
-            profileChangeRequest = new UserProfileChangeRequest.Builder()
-                    .setDisplayName(textChangeUsername.getText().toString())
-                    .setPhotoUri(downloadFile)
-                    .build();
+        if(updateUser.getPhotoUrl()==null || updateUser.getDisplayName().trim().equals("")) {
+            UserProfileChangeRequest profileChangeRequest;
+            //-----No Change to Profile Picture
+            if (downloadFile == null) {
+                profileChangeRequest = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(textChangeUsername.getText().toString())
+                        .build();
+            } else {
+                //Upload picture to Firebase storage and update the profile picture
+                Log.i("NOTE@@@", downloadFile.toString());
+                profileChangeRequest = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(textChangeUsername.getText().toString())
+                        .setPhotoUri(downloadFile)
+                        .build();
+            }
+
+            //update to model.User
+            updateUser.updateProfile(profileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(ProfileActivity.this, "Update profile successfully.", Toast.LENGTH_LONG).show();
+                        currentUser = instance.getCurrentUserInformation();
+                        startActivity(getIntent());
+                    }
+                }
+            });
         }
 
         //Update password
@@ -145,17 +160,6 @@ public class ProfileActivity extends AppCompatActivity {
             });
         }
 
-        //update to model.User
-        updateUser.updateProfile(profileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    Toast.makeText(ProfileActivity.this, "Update profile successfully.", Toast.LENGTH_LONG).show();
-                    currentUser = instance.getCurrentUserInformation();
-                    startActivity(getIntent());
-                }
-            }
-        });
     }
 
     //Select a picture to upload from internal storage
@@ -177,10 +181,9 @@ public class ProfileActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             Glide.with(this).load(data.getData()).into(imageProfilePicture);
-            buttonSave.setVisibility(View.VISIBLE);
-            buttonCancel.setVisibility(View.VISIBLE);
         }
         updateProfilePicture(bm);
+
     }
     //Upload the selected picture on Firebase Storage
     public void updateProfilePicture(Bitmap bm){
@@ -197,6 +200,10 @@ public class ProfileActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Uri> urlTask) {
                             if (urlTask.getResult() != null) {
                                 downloadFile = urlTask.getResult();
+                                if(!textChangeUsername.getText().toString().trim().equals("")){
+                                    buttonSave.setVisibility(View.VISIBLE);
+                                    buttonCancel.setVisibility(View.VISIBLE);
+                                }
                                 Log.i("NOTE",downloadFile.toString());
                             }
                         }
@@ -206,25 +213,34 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-
     public void updateUI(User user){
+
         if (user == null) {
             Intent intent = new Intent(this, MainActivity.class);
             this.startActivity(intent);
             finish();
         } else {
-            if (user.getName() == null || user.getName().equals("")) {
-                textTopUsername.setText(user.getEmail());
-                textMidUsername.setText(user.getEmail());
-            } else {
-                textTopUsername.setText(user.getName());
-                textMidUsername.setText(user.getName());
-                textChangeUsername.setText(user.getName());
-            }
-            textChangeEmail.setText(user.getEmail());
-            if(updateUser.getPhotoUrl() != null){
+            if(updateUser.getPhotoUrl()!=null && !updateUser.getDisplayName().trim().equals("")){
+                imageBack.setVisibility(View.VISIBLE);
+                textChangeUsername.setEnabled(false);
+                textChangeProfilePicture.setEnabled(false);
+                buttonSave.setVisibility(View.INVISIBLE);
+                buttonCancel.setVisibility(View.INVISIBLE);
+                buttonLogOut.setVisibility(View.VISIBLE);
+                textMidUsername.setText(updateUser.getDisplayName());
+                textTopUsername.setText(updateUser.getDisplayName());
+                textChangeUsername.setText(updateUser.getDisplayName());
                 Glide.with(this).load(updateUser.getPhotoUrl()).into(imageProfilePicture);
             }
+            else{
+                buttonSave.setVisibility(View.INVISIBLE);
+                buttonCancel.setVisibility(View.INVISIBLE);
+                imageBack.setVisibility(View.INVISIBLE);
+                buttonLogOut.setVisibility(View.INVISIBLE);
+                Toast.makeText(this, "Please enter your username and select profile picture",
+                        Toast.LENGTH_SHORT).show();
+            }
+            textChangeEmail.setText(user.getEmail());
         }
     }
 
