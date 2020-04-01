@@ -20,7 +20,7 @@
         app:layout_constraintVertical_bias="0.0">
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/imageBack"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:onClick="backOnClick"
@@ -30,7 +30,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.533"
-            app:srcCompat="@drawable/back" />
+            app:srcCompat="@drawable/home_icon" />
 
         <TextView
             android:id="@+id/textTopUsername"

@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.lethdz.onlinechatdemo.FirebaseSingleton;
 import com.lethdz.onlinechatdemo.HomeActivity;
+import com.lethdz.onlinechatdemo.ProfileActivity;
 import com.lethdz.onlinechatdemo.R;
 import com.lethdz.onlinechatdemo.modal.User;
 
@@ -172,7 +173,7 @@ public class SignUpFragment extends Fragment {
 
     private void updateUI(User currentUser) {
         if(currentUser != null) {
-            Intent intent = new Intent(getContext(), HomeActivity.class);
+            Intent intent = new Intent(getContext(), ProfileActivity.class);
             this.startActivity(intent);
             getActivity().finish();
         }
