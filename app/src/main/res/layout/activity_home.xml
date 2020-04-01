@@ -71,11 +71,12 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.803" />
 
-        <Button
+        <ImageView
             android:id="@+id/btn_actionMenu"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@drawable/icon_profile"
+            android:foreground="@drawable/rounded_fg_actionbar"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.91"

@@ -5,13 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="25dp"
-    app:cardBackgroundColor="#8135E6CA"
+    app:cardBackgroundColor="#16D8FF"
     app:contentPadding="10dp">
 
     <ImageView
         android:id="@+id/iv_avatar"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:foreground="@drawable/rounded_fg_cardlayout"
         app:srcCompat="@drawable/icon_profile" />
 
     <TextView

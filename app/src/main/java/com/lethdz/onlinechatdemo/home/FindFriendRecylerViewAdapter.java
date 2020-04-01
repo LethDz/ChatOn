@@ -1,5 +1,6 @@
 package com.lethdz.onlinechatdemo.home;
 
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.lethdz.onlinechatdemo.HomeActivity;
 import com.lethdz.onlinechatdemo.R;
 import com.lethdz.onlinechatdemo.dao.FirebaseDAO;
@@ -41,7 +43,7 @@ public class FindFriendRecylerViewAdapter extends RecyclerView.Adapter<FindFrien
         if (userDetail.getPhotoURL() == null) {
             holder.avatar.setImageResource(R.drawable.icon_profile);
         } else {
-            holder.avatar.setImageResource(userDetail.getPhotoURL().getPort());
+            Glide.with(HomeActivity.activity).load(Uri.parse(userDetail.getPhotoURL())).into(holder.avatar);
         }
         holder.displayName.setText(userDetail.getEmail());
     }

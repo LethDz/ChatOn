@@ -10,6 +10,7 @@
 
     <ImageView
         android:id="@+id/img_profile"
+        android:foreground="@drawable/rounded_fg"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:background="@drawable/icon_profile"

@@ -1,5 +1,6 @@
 package com.lethdz.onlinechatdemo;
 
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +10,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.lethdz.onlinechatdemo.modal.RoomMessage;
-import com.lethdz.onlinechatdemo.modal.User;
+import com.lethdz.onlinechatdemo.modal.UserDetail;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -93,13 +95,13 @@ public class MessageListViewAdapter extends RecyclerView.Adapter {
             // Format the stored timestamp into a readable String using method.
 
             timeText.setText(formatDate(message.getTimeStamp().toDate()));
-            for (User element: MessageListActivity.getChatRoom().getMembers()) {
+            for (UserDetail element: MessageListActivity.getChatRoom().getMembers()) {
                 if (!element.getUid().equals(mAuth.getCurrentUser().getUid())) {
-                    nameText.setText(element.getEmail());
-                    if (element.getPhotoUrl() == null) {
+                    nameText.setText(element.getDisplayName());
+                    if (element.getPhotoURL().equals("")) {
                         profileImage.setImageResource(R.drawable.icon_profile);
                     } else {
-                        // profileImage.setImageResource(element.getPhotoUrl().getEncodedPath());
+                        Glide.with(MessageListActivity.activity).load(Uri.parse(element.getPhotoURL())).into(profileImage);
                     }
                 }
             }

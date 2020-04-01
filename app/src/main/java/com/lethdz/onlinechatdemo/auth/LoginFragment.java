@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.lethdz.onlinechatdemo.FirebaseSingleton;
 import com.lethdz.onlinechatdemo.HomeActivity;
+import com.lethdz.onlinechatdemo.ProfileActivity;
 import com.lethdz.onlinechatdemo.R;
 import com.lethdz.onlinechatdemo.modal.User;
 
@@ -147,38 +148,44 @@ public class LoginFragment extends Fragment {
         txtPassword = view.findViewById(R.id.txt_Password);
         btnLogin = view.findViewById(R.id.btn_Login);
         progressBar = getActivity().findViewById(R.id.toolbarprogress);
-
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                txtEmail.onEditorAction(EditorInfo.IME_ACTION_DONE);
-                txtPassword.onEditorAction(EditorInfo.IME_ACTION_DONE);
-                progressBar.setVisibility(View.VISIBLE);
-                progressBar.setProgress(60, true);
-                instance.getmAuth().signInWithEmailAndPassword(
-                        txtEmail.getText().toString(),
-                        txtPassword.getText().toString())
-                        .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if(task.isSuccessful()) {
-                                    Log.d("Tag", "signInWithEmail:success");
-                                    User user = instance.getCurrentUserInformation();
-                                    progressBar.setProgress(100, true);
-                                    Toast.makeText(getContext(), "Authentication success.", Toast.LENGTH_SHORT)
-                                            .show();
-                                    updateUI(user);
-                                } else {
-                                    Log.w("waring", "signInWithEmail:failure", task.getException());
-                                    Toast.makeText(getContext(), "Authentication failed.", Toast.LENGTH_SHORT)
-                                            .show();
-                                    progressBar.setProgress(100, true);
+            btnLogin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (txtEmail.getText().toString().equals("") || txtPassword.getText().toString().equals("")) {
+                        Toast.makeText(getContext(), "Please Enter email or password.", Toast.LENGTH_SHORT)
+                                .show();
+                    } else {
+                    txtEmail.onEditorAction(EditorInfo.IME_ACTION_DONE);
+                    txtPassword.onEditorAction(EditorInfo.IME_ACTION_DONE);
+                    progressBar.setProgress(0);
+                    progressBar.setVisibility(View.VISIBLE);
+                    progressBar.setProgress(60, true);
+                    instance.getmAuth().signInWithEmailAndPassword(
+                            txtEmail.getText().toString(),
+                            txtPassword.getText().toString())
+                            .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if(task.isSuccessful()) {
+                                        Log.d("Tag", "signInWithEmail:success");
+                                        User user = instance.getCurrentUserInformation();
+                                        progressBar.setProgress(100, true);
+                                        Toast.makeText(getContext(), "Authentication success.", Toast.LENGTH_SHORT)
+                                                .show();
+                                        updateUI(user);
+                                    } else {
+                                        Log.w("waring", "signInWithEmail:failure", task.getException());
+                                        Toast.makeText(getContext(), "Authentication failed.", Toast.LENGTH_SHORT)
+                                                .show();
+                                        progressBar.setProgress(100, true);
+                                        progressBar.setVisibility(View.INVISIBLE);
+                                    }
                                 }
-                            }
-                        });
+                            });
+                    }
+                }
+            });
 
-            }
-        });
     }
 
     private void updateUI(User currentUser) {

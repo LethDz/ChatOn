@@ -136,6 +136,7 @@ public class FindFriendFragment extends Fragment {
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                if (!query.equals(""))
                 firebaseDAO.searchFriend(query, adapter, listUser, view, getActivity());
                 return false;
             }
