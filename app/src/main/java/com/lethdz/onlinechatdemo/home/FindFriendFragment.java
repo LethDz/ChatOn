@@ -12,19 +12,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.lethdz.onlinechatdemo.R;
 import com.lethdz.onlinechatdemo.dao.FirebaseDAO;
 import com.lethdz.onlinechatdemo.modal.UserDetail;
@@ -144,7 +136,7 @@ public class FindFriendFragment extends Fragment {
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                firebaseDAO.searchFriend(query, adapter, listUser, view);
+                firebaseDAO.searchFriend(query, adapter, listUser, view, getActivity());
                 return false;
             }
 

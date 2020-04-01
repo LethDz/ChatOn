@@ -31,7 +31,7 @@ public class FirebaseSingleton {
         if (mAuth != null) {
             FirebaseUser user = mAuth.getCurrentUser();
             if (user != null) {
-                return new User(user.getDisplayName(), user.getEmail(), user.getPhotoUrl(), user.isEmailVerified());
+                return new User(user.getDisplayName(), user.getEmail(), user.getPhotoUrl(), user.isEmailVerified(), user.getUid());
             }
         }
         return null;

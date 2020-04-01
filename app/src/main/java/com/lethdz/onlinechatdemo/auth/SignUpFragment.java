@@ -13,8 +13,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,6 +26,7 @@ import com.lethdz.onlinechatdemo.FirebaseSingleton;
 import com.lethdz.onlinechatdemo.HomeActivity;
 import com.lethdz.onlinechatdemo.ProfileActivity;
 import com.lethdz.onlinechatdemo.R;
+import com.lethdz.onlinechatdemo.dao.FirebaseDAO;
 import com.lethdz.onlinechatdemo.modal.User;
 
 
@@ -43,6 +46,7 @@ public class SignUpFragment extends Fragment {
 
     // TODO: Declare an instance of FirebaseSingleton
     private FirebaseSingleton instance;
+    private FirebaseDAO firebaseDAO = new FirebaseDAO();
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -140,15 +144,21 @@ public class SignUpFragment extends Fragment {
     private static EditText txtEmail;
     private static EditText txtPassword;
     private static Button btnSignUp;
+    private static ProgressBar progressBar;
 
     private void signUp(View view) {
         txtEmail = view.findViewById(R.id.txt_EmailSignUp);
         txtPassword = view.findViewById(R.id.txt_PasswordSignUp);
         btnSignUp = view.findViewById(R.id.btn_SignUp);
+        progressBar = getActivity().findViewById(R.id.toolbarprogress);
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                txtEmail.onEditorAction(EditorInfo.IME_ACTION_DONE);
+                txtPassword.onEditorAction(EditorInfo.IME_ACTION_DONE);
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setProgress(60, true);
                 instance.getmAuth().createUserWithEmailAndPassword(
                         txtEmail.getText().toString(),
                         txtPassword.getText().toString())
@@ -159,11 +169,14 @@ public class SignUpFragment extends Fragment {
                                     // Sign in success, update UI with the signed-in user's information
                                     Log.d("Info", "createUserWithEmail: success");
                                     User user = instance.getCurrentUserInformation();
+                                    firebaseDAO.signUp(user);
+                                    progressBar.setProgress(100, true);
                                     Toast.makeText(getContext(), "Authentication success", Toast.LENGTH_SHORT).show();
                                     updateUI(user);
                                 } else {
                                     Log.w("warn", "createUserWithEmail: failure", task.getException());
                                     Toast.makeText(getContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
+                                    progressBar.setProgress(100, true);
                                 }
                             }
                         });
