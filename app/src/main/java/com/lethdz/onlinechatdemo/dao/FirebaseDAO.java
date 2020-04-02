@@ -281,16 +281,31 @@ public class FirebaseDAO {
     }
 
     public void signUp(User user) {
-        String displayName = user.getEmail().substring(0, user.getEmail().indexOf("@"));
-        UserDetail userDetail = new UserDetail(user.getUid(),
+        UserDetail userDetail = new UserDetail(
+                user.getUid(),
                 user.getEmail(),
-                displayName,
-                null,
+                user.getName(),
+                user.getPhotoUrl().toString(),
                 new ArrayList<UserChatRoom>());
         db.collection("UserDetail").document(user.getUid()).set(userDetail);
     }
 
     public void updateProfile(String name, Uri photoUri, String userId) {
         db.collection("UserDetail").document(userId).update("displayName", name, "photoURL", photoUri.toString());
+    }
+
+    public void registerGoogleAccountToDatabase(final User currentUser) {
+        db.collection("UserDetail").
+                whereEqualTo("uid", currentUser.getUid()).
+                get().
+                addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.getResult().isEmpty()) {
+                    signUp(currentUser);
+                }
+            }
+        });
+
     }
 }
