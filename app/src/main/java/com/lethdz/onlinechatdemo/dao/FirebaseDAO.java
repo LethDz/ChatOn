@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
@@ -231,13 +233,13 @@ public class FirebaseDAO {
                         if (isFirstLoadMessage()) {
                             // set title of the chat room.
                             TextView txtTitle = activity.findViewById(R.id.txt_chatTitle);
-                            String title = "";
+                            ImageView imgAvatarTitle = activity.findViewById(R.id.img_profileChatTitle);
                             String currentUser = auth.getCurrentUser().getUid();
                             for (UserDetail element:
                                     chatRoom.getMembers()) {
                                 if (!element.getUid().equals(currentUser)) {
-                                    title += element.getEmail();
-                                    txtTitle.setText(title);
+                                    txtTitle.setText(element.getDisplayName());
+                                    Glide.with(activity).load(Uri.parse(element.getPhotoURL())).into(imgAvatarTitle);
                                 }
                             }
                             messages.addAll(chatRoom.getRoomMessages());

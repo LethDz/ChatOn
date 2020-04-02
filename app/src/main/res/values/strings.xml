@@ -5,6 +5,8 @@
     <string name="search_hint">Guess What</string>
     <string name="home_friend">Find Dudes</string>
     <string name="home_chat">Chat Room</string>
+    <string name="username_hint">Enter Username</string>
+    <string name="password_profile_hint">Enter the new password</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
