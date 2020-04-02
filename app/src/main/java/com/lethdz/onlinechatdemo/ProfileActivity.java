@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,6 +22,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
@@ -47,7 +51,10 @@ public class ProfileActivity extends AppCompatActivity {
     ByteArrayOutputStream baos;
     Bitmap bm = null;
     ProgressBar progressBar;
-    String fileName;
+    GoogleSignInOptions gso;
+    GoogleSignInClient mGoogleSignInClient;
+    private long mLastClickTime = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +78,13 @@ public class ProfileActivity extends AppCompatActivity {
         storage = FirebaseStorage.getInstance();
         mStorageRef = storage.getReference();
         baos = new ByteArrayOutputStream();
+
+        //setup google
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.client_id))
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         updateUI(currentUser);
 
@@ -97,6 +111,7 @@ public class ProfileActivity extends AppCompatActivity {
     // ------ Log Out button -----
     public void logOutOnClick(View view) {
         instance.getmAuth().signOut();
+        mGoogleSignInClient.signOut();
         Intent intent = new Intent(this, MainActivity.class);
         finish();
         startActivity(intent);
@@ -233,7 +248,7 @@ public class ProfileActivity extends AppCompatActivity {
                 textTopUsername.setText("Please update profile information");
                 textChangePassword.setEnabled(false);
                 Toast.makeText(this, "Please enter your username and select profile picture",
-                        Toast.LENGTH_SHORT).show();
+                        Toast.LENGTH_LONG).show();
             }
             textChangeEmail.setText(user.getEmail());
         }
@@ -285,6 +300,10 @@ public class ProfileActivity extends AppCompatActivity {
 
     //Tap the back icon to get back to home screen.
     public void backOnClick(View view){
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+            return;
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
         onBackPressed();
     }
 

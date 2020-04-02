@@ -14,6 +14,9 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.tabs.TabLayout;
 import com.lethdz.onlinechatdemo.modal.User;
 import com.lethdz.onlinechatdemo.viewpageradapter.ViewPagerHomeAdapter;
@@ -23,11 +26,19 @@ public class HomeActivity extends AppCompatActivity {
     private ViewPager viewPagerHome;
     private ImageView btnAction;
     public static Activity activity;
+    GoogleSignInOptions gso;
+    GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        //setup google
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.client_id))
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         activity = this;
         //Initialize Firebase SingleTon
         instance = FirebaseSingleton.getInstance();
@@ -35,6 +46,8 @@ public class HomeActivity extends AppCompatActivity {
         setupTabPager();
         //Setup Action Menu
         setupActionMenu();
+
+
     }
 
     private void setupActionMenu() {
@@ -52,6 +65,7 @@ public class HomeActivity extends AppCompatActivity {
                     public boolean onMenuItemClick(MenuItem item) {
                         if (item.getTitle() == getString(R.string.action_signOut)) {
                             instance.getmAuth().signOut();
+                            mGoogleSignInClient.signOut();
                             Intent intent = new Intent(HomeActivity.this, MainActivity.class);
                             HomeActivity.this.startActivity(intent);
                             finish();
