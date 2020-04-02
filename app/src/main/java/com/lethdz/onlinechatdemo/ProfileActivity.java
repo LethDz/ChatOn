@@ -88,8 +88,10 @@ public class ProfileActivity extends AppCompatActivity {
         } else if (!textChangePassword.getText().toString().equals("")) {
                 buttonCancel.setVisibility(View.VISIBLE);
                 buttonSave.setVisibility(View.VISIBLE);
+        } else if (textChangePassword.getText().toString().equals("")) {
+            buttonCancel.setVisibility(View.INVISIBLE);
+            buttonSave.setVisibility(View.INVISIBLE);
         }
-
     }
 
     // ------ Log Out button -----
@@ -228,6 +230,8 @@ public class ProfileActivity extends AppCompatActivity {
                 buttonCancel.setVisibility(View.INVISIBLE);
                 imageBack.setVisibility(View.INVISIBLE);
                 buttonLogOut.setVisibility(View.INVISIBLE);
+                textTopUsername.setText("Please update profile information");
+                textChangePassword.setEnabled(false);
                 Toast.makeText(this, "Please enter your username and select profile picture",
                         Toast.LENGTH_SHORT).show();
             }
@@ -243,6 +247,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 checkRequiredField();
+                setTextUserChange(s);
             }
 
             @Override
@@ -266,6 +271,16 @@ public class ProfileActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void setTextUserChange(CharSequence input) {
+        if (textChangeUsername.getText().toString().equals("")) {
+            textTopUsername.setText("Please update profile information");
+            textMidUsername.setText("username");
+        } else {
+            textTopUsername.setText(input);
+            textMidUsername.setText(input);
+        }
     }
 
     //Tap the back icon to get back to home screen.
