@@ -47,6 +47,7 @@ public class ProfileActivity extends AppCompatActivity {
     ByteArrayOutputStream baos;
     Bitmap bm = null;
     ProgressBar progressBar;
+    String fileName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -153,7 +154,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     //Upload the selected picture on Firebase Storage
     public void updateProfile(Bitmap bm){
-        final StorageReference ref = mStorageRef.child("images/"+"profilePicture");
+        final StorageReference ref = mStorageRef.child("images/" + updateUser.getUid() + "profilePicture");
         bm.compress(Bitmap.CompressFormat.JPEG,100,baos);
         byte[] image = baos.toByteArray();
         final UploadTask upload = ref.putBytes(image);
