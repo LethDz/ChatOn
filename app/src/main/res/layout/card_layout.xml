@@ -2,11 +2,11 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cd_profileCard"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="25dp"
+    android:layout_marginVertical="25dp"
     app:cardBackgroundColor="#16D8FF"
-    app:contentPadding="10dp">
+    app:contentPadding="15dp">
 
     <ImageView
         android:id="@+id/iv_avatar"
@@ -28,7 +28,7 @@
         android:id="@+id/btn_addFriend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="220dp"
+        android:layout_marginLeft="235dp"
         android:layout_marginTop="30dp"
         android:drawableStart="@android:drawable/ic_menu_add"
         android:drawableTint="#2962FF"

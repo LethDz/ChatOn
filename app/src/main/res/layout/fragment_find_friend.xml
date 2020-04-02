@@ -5,13 +5,18 @@
     android:id="@+id/home_friend_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".home.FindFriendFragment" >
+    android:paddingHorizontal="20dp"
+    tools:context=".home.FindFriendFragment">
 
     <SearchView
         android:id="@+id/s_searchFriend"
-        android:layout_width="370dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:autofillHints="Enter an email"
+        android:iconifiedByDefault="false"
         android:background="#20FCEC"
+        android:inputType="textEmailAddress"
+        android:queryHint="Enter an email"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

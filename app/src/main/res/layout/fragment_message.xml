@@ -5,18 +5,8 @@
     android:id="@+id/home_message_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingHorizontal="20dp"
     tools:context=".home.MessageHomeFragment">
-
-    <SearchView
-        android:id="@+id/s_searchMess"
-        android:layout_width="370dp"
-        android:layout_height="wrap_content"
-        android:background="#20FCEC"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.12" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/home_find"
@@ -25,7 +15,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/s_searchMess"
+        app:layout_constraintTop_toBottomOf="@+id/txt_HomeTitleChat"
         app:layout_constraintVertical_bias="0.05">
 
         <ScrollView
@@ -58,8 +48,9 @@
         android:text="@string/home_chat"
         android:textColor="#00B8D4"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/s_searchMess"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.03" />
 </androidx.constraintlayout.widget.ConstraintLayout>

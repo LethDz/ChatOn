@@ -1,6 +1,7 @@
 package com.lethdz.onlinechatdemo.home;
 
 import android.content.Intent;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import java.util.List;
 public class MessageHomeRecyclerViewAdapter extends RecyclerView.Adapter<MessageHomeRecyclerViewAdapter.ViewHolder> {
     private List<UserChatRoom> listChatRoom;
     private FragmentActivity activity;
+    private long mLastClickTime = 0;
 
     public MessageHomeRecyclerViewAdapter(List<UserChatRoom> listChatRoom, FragmentActivity activity) {
         this.listChatRoom = listChatRoom;
@@ -71,6 +73,11 @@ public class MessageHomeRecyclerViewAdapter extends RecyclerView.Adapter<Message
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+                        return;
+                    }
+                    mLastClickTime = SystemClock.elapsedRealtime();
+
                     int position = getAdapterPosition();
                     UserChatRoom chatRoom = listChatRoom.get(position);
                     String documentName = chatRoom.getDocumentName();

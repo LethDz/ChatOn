@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme.NoActionBar"
         android:windowSoftInputMode="adjustResize"
         >
-        <activity android:name=".ProfileActivity" android:windowSoftInputMode="adjustResize"></activity>
+        <activity android:name=".ProfileActivity" android:windowSoftInputMode="adjustNothing"></activity>
         <activity android:name=".MessageListActivity"
             android:windowSoftInputMode="adjustResize"
             ></activity>

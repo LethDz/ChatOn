@@ -1,8 +1,6 @@
 package com.lethdz.onlinechatdemo.home;
 
-import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -132,7 +130,7 @@ public class FindFriendFragment extends Fragment {
     }
 
     public void setupSearch(final View view) {
-        SearchView search = view.findViewById(R.id.s_searchFriend);
+        final SearchView search = view.findViewById(R.id.s_searchFriend);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
