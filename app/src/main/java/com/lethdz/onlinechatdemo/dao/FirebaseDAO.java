@@ -1,7 +1,6 @@
 package com.lethdz.onlinechatdemo.dao;
 
 import android.app.Activity;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +24,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -46,6 +46,7 @@ public class FirebaseDAO {
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private boolean duplicatedFriend = false;
     private boolean firstLoadMessage = true;
+    private ListenerRegistration messagesListener;
 
     public void addFriend(UserDetail user, View v, List<UserDetail> getListUser, RecyclerView.Adapter getAdapter, Activity activity) {
         final UserDetail userAdding = user;
@@ -211,7 +212,7 @@ public class FirebaseDAO {
 
     public void getRoomMessage(String documentName, final List<RoomMessage> messages, final RecyclerView.Adapter adapter, final Activity activity) {
         DocumentReference docRef = db.collection("ChatRoom").document(documentName);
-        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        messagesListener = docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 // Check for error
@@ -248,15 +249,12 @@ public class FirebaseDAO {
                             adapter.notifyDataSetChanged();
                             setFirstLoadMessage(false);
                         } else {
-                            String previousMessage = messages.get(messages.size() - 1).getMessage();
-                            String newestMessage = chatRoom.getRoomMessages().get(chatRoom.getRoomMessages().size() - 1).getMessage();
-                            if (!previousMessage.equals(newestMessage)) {
-                                MediaPlayer mediaPlayer =  MediaPlayer.create(activity, R.raw.chat_sound);
-                                mediaPlayer.setVolume(50, 50);
+                            Timestamp previousTimeStamp = messages.get(messages.size() - 1).getTimeStamp();
+                            Timestamp newestTimeStamp = chatRoom.getRoomMessages().get(chatRoom.getRoomMessages().size() - 1).getTimeStamp();
+                            if (!(previousTimeStamp.compareTo(newestTimeStamp) == 0)) {
                                 messages.add(chatRoom.getRoomMessages().get(chatRoom.getRoomMessages().size() - 1));
                                 adapter.notifyDataSetChanged();
-                                mediaPlayer.start();
-
+                                MessageListActivity.mediaPlayer.start();
                             }
                         }
                     }
@@ -265,6 +263,10 @@ public class FirebaseDAO {
                 }
             }
         });
+    }
+
+    public void detachListener() {
+        this.messagesListener.remove();
     }
 
     public void sendMessage(String documentName, String message, final List<RoomMessage> messages) {
@@ -279,7 +281,7 @@ public class FirebaseDAO {
         userDetailRef.update("roomMessages", FieldValue.arrayUnion(roomMessage),
                 "lastMessage", message,
                 "timeStamp", new Timestamp(new Date()));
-        DocumentReference docRef = db.collection("UserDetail").document(auth.getCurrentUser().getUid());
+//        DocumentReference docRef = db.collection("UserDetail").document(auth.getCurrentUser().getUid());
     }
 
     private boolean isFirstLoadMessage() {

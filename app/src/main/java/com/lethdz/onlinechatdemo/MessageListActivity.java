@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -25,20 +27,23 @@ public class MessageListActivity extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
     private FirebaseDAO firebaseDAO = new FirebaseDAO();
     private String documentName;
+    @SuppressLint("StaticFieldLeak")
     public static Activity activity;
+    public static MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_list);
+        activity = this;
+        mediaPlayer = MediaPlayer.create(activity, R.raw.chat_sound);
+        mediaPlayer.setVolume(50, 50);
         setupAdapter();
         Intent intent = getIntent();
         this.documentName = intent.getStringExtra("DOCUMENT_NAME");
-        getChatRoom(documentName, messageList);
-        activity = this;
     }
 
-    private void getChatRoom(String documentName, List<RoomMessage> messages) {
+    private void getMessages(String documentName, List<RoomMessage> messages) {
         firebaseDAO.getRoomMessage(documentName, messages, adapter, this);
     }
 
@@ -56,8 +61,33 @@ public class MessageListActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        firebaseDAO.detachListener();
         finish();
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onPause() {
+        firebaseDAO.detachListener();
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        firebaseDAO.detachListener();
+        super.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        getMessages(documentName, messageList);
+        super.onResume();
+    }
+
+    @Override
+    protected void onStart() {
+        getMessages(documentName, messageList);
+        super.onStart();
     }
 
     public static void setChatRoom(ChatRoom chatRoom) {
