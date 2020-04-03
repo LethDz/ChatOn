@@ -1,6 +1,7 @@
 package com.lethdz.onlinechatdemo.dao;
 
 import android.app.Activity;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.lethdz.onlinechatdemo.MainActivity;
 import com.lethdz.onlinechatdemo.MessageListActivity;
 import com.lethdz.onlinechatdemo.R;
 import com.lethdz.onlinechatdemo.modal.ChatRoom;
@@ -72,7 +74,7 @@ public class FirebaseDAO {
                 timeCreated);
 
         // Value for the chat room
-        List<UserDetail> members = new ArrayList<UserDetail>();
+        List<UserDetail> members = new ArrayList<>();
         members.add(new UserDetail(user.getUid(), user.getEmail(), user.getDisplayName(), user.getPhotoURL()));
         members.add(new UserDetail(auth.getCurrentUser().getUid(),
                 auth.getCurrentUser().getEmail(),
@@ -246,8 +248,16 @@ public class FirebaseDAO {
                             adapter.notifyDataSetChanged();
                             setFirstLoadMessage(false);
                         } else {
-                            messages.add(chatRoom.getRoomMessages().get(chatRoom.getRoomMessages().size() - 1));
-                            adapter.notifyDataSetChanged();
+                            String previousMessage = messages.get(messages.size() - 1).getMessage();
+                            String newestMessage = chatRoom.getRoomMessages().get(chatRoom.getRoomMessages().size() - 1).getMessage();
+                            if (!previousMessage.equals(newestMessage)) {
+                                MediaPlayer mediaPlayer =  MediaPlayer.create(activity, R.raw.chat_sound);
+                                mediaPlayer.setVolume(50, 50);
+                                messages.add(chatRoom.getRoomMessages().get(chatRoom.getRoomMessages().size() - 1));
+                                adapter.notifyDataSetChanged();
+                                mediaPlayer.start();
+
+                            }
                         }
                     }
                 } else {
@@ -272,11 +282,11 @@ public class FirebaseDAO {
         DocumentReference docRef = db.collection("UserDetail").document(auth.getCurrentUser().getUid());
     }
 
-    public boolean isFirstLoadMessage() {
+    private boolean isFirstLoadMessage() {
         return firstLoadMessage;
     }
 
-    public void setFirstLoadMessage(boolean firstLoadMessage) {
+    private void setFirstLoadMessage(boolean firstLoadMessage) {
         this.firstLoadMessage = firstLoadMessage;
     }
 
@@ -294,6 +304,47 @@ public class FirebaseDAO {
         db.collection("UserDetail").document(userId).update("displayName", name, "photoURL", photoUri.toString());
     }
 
+    public void updateExistedUserInformation(final User user) {
+        // Update UserDetail
+        db.collection("UserDetail").
+                document(user.getUid()).
+                update("displayName", user.getName(),
+                        "photoURL", user.getPhotoUrl().toString());
+        // Update ChatRoom
+        db.collection("UserDetail").
+                document(user.getUid()).
+                get().
+                addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot doc = task.getResult();
+                UserDetail currentUser = doc.toObject(UserDetail.class);
+                for (UserChatRoom element:
+                        currentUser.getChatRoom()) {
+                    db.collection("ChatRoom").document(element.getDocumentName()).get().addOnCompleteListener(
+                            new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    DocumentSnapshot doc = task.getResult();
+                                    ChatRoom chatRoom = doc.toObject(ChatRoom.class);
+                                    List<UserDetail> members = chatRoom.getMembers();
+                                    for (int i = 0; i < members.size() - 1 ; i++) {
+                                        if (members.get(i).getUid().equals(user.getUid())) {
+                                            members.set(i, new UserDetail(user.getUid(), user.getEmail(), user.getName(), user.getPhotoUrl().toString()));
+                                            Log.d("Member", members.get(i).getDisplayName());
+                                            db.collection("ChatRoom").document(chatRoom.getId()).update("members", members);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                    );
+                }
+                MainActivity.progressBar.setProgress(100, true);
+            }
+        });
+    }
+
     public void registerGoogleAccountToDatabase(final User currentUser) {
         db.collection("UserDetail").
                 whereEqualTo("uid", currentUser.getUid()).
@@ -303,9 +354,16 @@ public class FirebaseDAO {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.getResult().isEmpty()) {
                     signUp(currentUser);
+                } else {
+                    QuerySnapshot qds = task.getResult();
+                    DocumentSnapshot doc = qds.getDocuments().get(0);
+                    String displayName = doc.get("displayName").toString();
+                    String photoURL = doc.get("photoURL").toString();
+                    if (!displayName.equals(currentUser.getName()) || !photoURL.equals(currentUser.getPhotoUrl().toString())) {
+                        updateExistedUserInformation(currentUser);
+                    }
                 }
             }
         });
-
     }
 }

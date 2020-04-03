@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     GoogleSignInOptions gso;
     GoogleSignInClient mGoogleSignInClient;
     private FirebaseDAO firebaseDAO;
-    private ProgressBar progressBar;
+    public static ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,10 +135,10 @@ public class MainActivity extends AppCompatActivity {
                             Log.w("fail", "signInWithCredential:failure", task.getException());
                             Toast.makeText(MainActivity.this, "Authentication fail.", Toast.LENGTH_SHORT)
                                     .show();
+                            progressBar.setProgress(100, true);
+                            progressBar.setVisibility(View.INVISIBLE);
                             updateUI(null);
                         }
-                        progressBar.setProgress(100, true);
-                        progressBar.setVisibility(View.INVISIBLE);
                     }
                 });
     }
