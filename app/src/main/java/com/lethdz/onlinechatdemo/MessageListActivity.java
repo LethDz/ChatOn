@@ -67,21 +67,9 @@ public class MessageListActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        firebaseDAO.detachListener();
-        super.onPause();
-    }
-
-    @Override
     protected void onStop() {
         firebaseDAO.detachListener();
         super.onStop();
-    }
-
-    @Override
-    protected void onResume() {
-        getMessages(documentName, messageList);
-        super.onResume();
     }
 
     @Override

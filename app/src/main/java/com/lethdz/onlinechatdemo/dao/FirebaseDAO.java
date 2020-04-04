@@ -234,6 +234,7 @@ public class FirebaseDAO {
                     //check data and the first load
                     if(!documentSnapshot.getData().isEmpty()) {
                         if (isFirstLoadMessage()) {
+                            setFirstLoadMessage(false);
                             // set title of the chat room.
                             TextView txtTitle = activity.findViewById(R.id.txt_chatTitle);
                             ImageView imgAvatarTitle = activity.findViewById(R.id.img_profileChatTitle);
@@ -247,14 +248,15 @@ public class FirebaseDAO {
                             }
                             messages.addAll(chatRoom.getRoomMessages());
                             adapter.notifyDataSetChanged();
-                            setFirstLoadMessage(false);
                         } else {
-                            Timestamp previousTimeStamp = messages.get(messages.size() - 1).getTimeStamp();
-                            Timestamp newestTimeStamp = chatRoom.getRoomMessages().get(chatRoom.getRoomMessages().size() - 1).getTimeStamp();
-                            if (!(previousTimeStamp.compareTo(newestTimeStamp) == 0)) {
-                                messages.add(chatRoom.getRoomMessages().get(chatRoom.getRoomMessages().size() - 1));
-                                adapter.notifyDataSetChanged();
-                                MessageListActivity.mediaPlayer.start();
+                            if ((messages.size() - 1) >= 0) {
+                                Timestamp previousTimeStamp = messages.get(messages.size() - 1).getTimeStamp();
+                                Timestamp newestTimeStamp = chatRoom.getRoomMessages().get(chatRoom.getRoomMessages().size() - 1).getTimeStamp();
+                                if (!(previousTimeStamp.compareTo(newestTimeStamp) == 0)) {
+                                    messages.add(chatRoom.getRoomMessages().get(chatRoom.getRoomMessages().size() - 1));
+                                    adapter.notifyDataSetChanged();
+                                    MessageListActivity.mediaPlayer.start();
+                                }
                             }
                         }
                     }
@@ -266,6 +268,7 @@ public class FirebaseDAO {
     }
 
     public void detachListener() {
+        setFirstLoadMessage(true);
         this.messagesListener.remove();
     }
 
@@ -296,8 +299,8 @@ public class FirebaseDAO {
         UserDetail userDetail = new UserDetail(
                 user.getUid(),
                 user.getEmail(),
-                user.getName(),
-                user.getPhotoUrl().toString(),
+                user.getName() == null ? "" : user.getName(),
+                user.getPhotoUrl() == null ? "" : user.getPhotoUrl().toString(),
                 new ArrayList<UserChatRoom>());
         db.collection("UserDetail").document(user.getUid()).set(userDetail);
     }
